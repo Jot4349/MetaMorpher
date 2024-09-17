@@ -1,0 +1,37 @@
+name: Deploy to Heroku
+
+on:
+  workflow_dispatch:
+    inputs:
+      HEROKU_APP_NAME:
+        description: "Heroku App name"
+        required: true
+      HEROKU_API_KEY:
+        description: "Heroku Api Key"
+        required: true
+      HEROKU_EMAIL:
+        description: "Heroku Email"
+        required: true
+      TEAM:
+        description: "Heroku Team Name Optional"
+        required: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout deploy branch
+        uses: actions/checkout@v2
+        with:
+          ref: "refs/heads/adv"
+
+      - name: Deploy to Heroku
+        uses: 5hojib/heroku-deploy-action@v1.0.1
+        with:
+          heroku_api_key: ${{inputs.HEROKU_API_KEY}}
+          heroku_app_name: ${{inputs.HEROKU_APP_NAME}}
+          heroku_email: ${{inputs.HEROKU_EMAIL}}
+          team: ${{ inputs.HK_TEAM_NAME != '' && format('team={0}', inputs.HK_TEAM_NAME) || '' }}
+          region: "eu"
+          usedocker: true
+          docker_heroku_process_type: web
+          stack: "container"
